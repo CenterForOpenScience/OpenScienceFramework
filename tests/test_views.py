@@ -4046,6 +4046,19 @@ class TestExternalAuthViews(OsfTestCase):
         assert_in('/logout?service=', res.location)
         assert_in(url, res.location)
 
+    def test_external_login_confirm_email_twice(self):
+        url = self.user.get_confirmation_url(self.user.username, external_id_provider='orcid', destination='dashboard')
+        res = self.app.get(url, auth=self.auth)
+        assert_equal(res.status_code, 302, 'redirects to cas login')
+        assert_in('/login?service=', res.location)
+
+        self.user.refresh_from_db()
+        assert_equal(self.user.email_verifications, {})
+
+        res = self.app.get(url, auth=self.auth)
+        assert_equal(res.status_code, 302, 'redirects to logged in dashboard')
+        assert_in('/dashboard/', res.location)
+
     def test_external_login_confirm_email_get_without_destination(self):
         url = self.user.get_confirmation_url(self.user.username, external_id_provider='orcid')
         res = self.app.get(url, auth=self.auth, expect_errors=True)
