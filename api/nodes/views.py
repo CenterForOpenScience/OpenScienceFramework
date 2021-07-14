@@ -89,6 +89,7 @@ from api.nodes.permissions import (
     ExcludeWithdrawals,
     NodeLinksShowIfVersion,
     ReadOnlyIfWithdrawn,
+    NodeDraftRegistrationsListPermission,
 )
 from api.nodes.serializers import (
     NodeSerializer,
@@ -618,7 +619,7 @@ class NodeDraftRegistrationsList(JSONAPIBaseView, generics.ListCreateAPIView, No
     Use DraftRegistrationsList endpoint instead.
     """
     permission_classes = (
-        IsAdminContributor,
+        NodeDraftRegistrationsListPermission,
         drf_permissions.IsAuthenticatedOrReadOnly,
         base_permissions.TokenHasScope,
     )
